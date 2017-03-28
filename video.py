@@ -1,13 +1,15 @@
 class Video:
     name = ""
     path = ""
-    format = ""
+    file_format = ""
     bytes = 0
     seconds = 0
     bitrate_kbps = 0
 
     def __init__(self, path):
         self.path = path
-        tmp = path.split('/')[-1]
-        self.name = tmp.split('.')[0]
-        self.format = tmp.split('.')[1]
+        self.name = path.split('/')[-1]
+        self.file_format = self.name.split('.')[-1]
+
+    def __repr__(self):
+        return '{}:{}'.format(self.path, self.bitrate_kbps)

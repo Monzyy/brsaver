@@ -32,32 +32,33 @@ def check_ffmpeg_version():
         exit('ffmpeg version 3+ not found')
 
 
+def collect_video_files(path):
+    files = [os.path.join(root, name)
+             for root, dirs, files in os.walk(path)
+             for name in files
+             if name.endswith((".mkv", ".mp4"))]
+    return files
+
+
 def main(args):
     check_python_version()
     check_ffmpeg_version()
 
+    bitrate_target = args.bitrate
+    max_bitrate = bitrate_target + 1000
+
     for path in args.paths:
-        bitrate_target = args.bitrate
-        max_bitrate = bitrate_target + 1000
-
-        # Get all videofiles with proper filetypes from the folder and all subfolders
-        vfiles = [os.path.join(root, name)
-                  for root, dirs, files in os.walk(path)
-                  for name in files
-                  if name.endswith((".mkv", ".mp4"))]
-
-        videos = []
-
         # Create video objects from the videofile names
-        for vfile in vfiles:
-            videos.append(Video(vfile))
-
-        fileIndex = 0
+        video_files = collect_video_files(path)
+        videos = []
+        for video_file in video_files:
+            videos.append(Video(video_file))
 
         # Run ffmpeg -i [videofile] to get bitrates
-        for file in vfiles:
-            tmp = subprocess.run(["ffmpeg", "-i", file], stderr=subprocess.PIPE)
-            lines = tmp.stderr.splitlines()
+        fileIndex = 0
+        for file in video_files:
+            out = subprocess.run(["ffmpeg", "-i", file], stderr=subprocess.PIPE)
+            lines = out.stderr.splitlines()
             for line in lines:
                 li = line.decode("utf-8")
                 if "bitrate" in li:
@@ -69,7 +70,7 @@ def main(args):
             if video.bitrate_kbps > max_bitrate and video.bitrate_kbps != 0:
                 subprocess.run(["ffmpeg", "-y", "-i", video.path, "-b:v",
                                 str(bitrate_target) + "k",
-                                path + "new" + video.name + "." + video.format])
+                                path + "new." + video.name])
 
 
 if __name__ == '__main__':
