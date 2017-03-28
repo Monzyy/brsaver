@@ -1,31 +1,29 @@
 import subprocess
-import os, sys, io, re
-
-from subprocess import check_output
-
+import os
+import re
 from Video import Video
+
 
 bitrate_target = 8192
 max_bitrate = bitrate_target + 1000
 path = '/home/magnus/Videoklip/brsaverTest/'
-dirs = os.listdir( path )
+dirs = os.listdir(path)
 
-
-#Get all videofiles with proper filetypes from the folder and all subfolders
+# Get all videofiles with proper filetypes from the folder and all subfolders
 vfiles = [os.path.join(root, name)
-             for root, dirs, files in os.walk(path)
-             for name in files
-             if name.endswith((".mkv", ".mp4"))]
+          for root, dirs, files in os.walk(path)
+          for name in files
+          if name.endswith((".mkv", ".mp4"))]
 
 videos = []
 
-#Create video objects from the videofile names
+# Create video objects from the videofile names
 for vfile in vfiles:
     videos.append(Video(vfile))
 
 fileIndex = 0
 
-#Run ffmpeg -i [videofile] to get bitrates
+# Run ffmpeg -i [videofile] to get bitrates
 for file in vfiles:
     tmp = subprocess.run(["ffmpeg", "-i", file], stderr=subprocess.PIPE)
     lines = tmp.stderr.splitlines()
@@ -33,9 +31,11 @@ for file in vfiles:
         li = line.decode("utf-8")
         if "bitrate" in li:
             videos[fileIndex].bitrate_kbps = int(re.findall(r"[\d+']+", li)[-1])
-    fileIndex += 1
+            fileIndex += 1
 
-#Create lower bitrate videos, if the videos bitrate is higher than max_bitrate
+# Create lower bitrate videos, if the videos bitrate is higher than max_bitrate
 for video in videos:
     if video.bitrate_kbps > max_bitrate and video.bitrate_kbps != 0:
-        subprocess.run(["ffmpeg", "-y", "-i", video.path, "-b:v", str(bitrate_target) + "k", path + "new" + video.name + "." + video.format])
+        subprocess.run(["ffmpeg", "-y", "-i", video.path, "-b:v",
+                        str(bitrate_target) + "k",
+                        path + "new" + video.name + "." + video.format])
