@@ -45,7 +45,7 @@ def main(args):
             li = line.decode("utf-8")
             if "bitrate" in li:
                 videos[fileIndex].bitrate_kbps = int(re.findall(r"[\d+']+", li)[-1])
-                fileIndex += 1
+        fileIndex += 1
 
     # Create lower bitrate videos, if the videos bitrate is higher than max_bitrate
     for video in videos:
