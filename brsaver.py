@@ -3,6 +3,10 @@ import argparse
 import os
 import re
 import subprocess
+import sys
+
+MIN_FFMPEG = 'ffmpeg version 3'
+MIN_PYTHON = (3, 5, 0)
 
 parser = argparse.ArgumentParser(description=('Convert .mkv and .mp4 files '
                                               'to a lower bitrate to save disk space.'))
@@ -17,7 +21,21 @@ parser.add_argument('-b', '--bitrate', dest='bitrate',
 args = parser.parse_args()
 
 
+def check_python_version():
+    if not sys.version_info >= MIN_PYTHON:
+        exit('python 3.5+ not found')
+
+
+def check_ffmpeg_version():
+    out = subprocess.run(['ffmpeg', '-version'], stdout=subprocess.PIPE)
+    if not MIN_FFMPEG.encode() in out.stdout:
+        exit('ffmpeg version 3+ not found')
+
+
 def main(args):
+    check_python_version()
+    check_ffmpeg_version()
+
     for path in args.paths:
         bitrate_target = args.bitrate
         max_bitrate = bitrate_target + 1000
