@@ -1,12 +1,24 @@
-import subprocess
+from video import Video
+import argparse
 import os
 import re
-from Video import Video
+import subprocess
 
 
-bitrate_target = 8192
+parser = argparse.ArgumentParser(description=('Convert .mkv and .mp4 files '
+                                              'to a lower bitrate to save disk space.'))
+parser.add_argument('-d', '--directory', dest='path',
+                    metavar='PATH', action='store',
+                    help='path to folder containing video files',
+                    type=str, required=True)
+parser.add_argument('-b', '--bitrate', dest='bitrate',
+                    metavar='BITRATE', action='store',
+                    help='bitrate to convert video files to',
+                    type=int, default=8192)
+args = parser.parse_args()
+bitrate_target = args.bitrate
 max_bitrate = bitrate_target + 1000
-path = '/home/magnus/Videoklip/brsaverTest/'
+path = args.path
 dirs = os.listdir(path)
 
 # Get all videofiles with proper filetypes from the folder and all subfolders
