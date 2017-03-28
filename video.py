@@ -1,5 +1,3 @@
-import re
-
 class Video:
     name = ""
     path = ""
