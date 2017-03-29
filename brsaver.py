@@ -35,6 +35,7 @@ def main(args):
     for vfile in vfiles:
         videos.append(Video(vfile))
 
+
     fileIndex = 0
 
     # Run ffmpeg -i [videofile] to get bitrates
@@ -52,7 +53,7 @@ def main(args):
         if video.bitrate_kbps > max_bitrate and video.bitrate_kbps != 0:
             subprocess.run(["ffmpeg", "-y", "-i", video.path, "-b:v",
                             str(bitrate_target) + "k",
-                            path + "new" + video.name + "." + video.format])
+                            path + "new" + video.name + video.format])
 
 
 if __name__ == '__main__':
