@@ -16,7 +16,7 @@ parser.add_argument("-d", "--directory", dest="paths",
                     type=str, required=True)
 parser.add_argument("-b", "--bitrate", dest="bitrate",
                     metavar="BITRATE", action="store",
-                    help="bitrate to convert video files to",
+                    help="bitrate to convert video files to in kbit",
                     type=int, default=8192)
 args = parser.parse_args()
 
