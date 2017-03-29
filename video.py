@@ -7,9 +7,6 @@ class Video:
     seconds = 0
     bitrate_kbps = 0
 
-    def __init__(self, directory, name, format):
-        self.directory = directory
-
     def __init__(self, fullpath):
         self.fullpath = fullpath
         self.directory = os.path.dirname(os.path.realpath(fullpath))
