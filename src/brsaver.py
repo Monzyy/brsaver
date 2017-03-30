@@ -15,7 +15,7 @@ parser.add_argument("-d", "--directory", dest="paths",
                     metavar="PATH", action="store", nargs="*",
                     help="path to folder containing video files",
                     required=True)
-parser.add_argument("-vc", "--videocodec", dest="videocodec",
+parser.add_argument("-c", "--codec", dest="videocodec",
                     metavar="VIDEOCODEC", action="store",
                     help="videocodec to encode to (default: hevc)",
                     type=str, default="hevc")
