@@ -1,5 +1,5 @@
 from video import Video
-import argparse
+import arguments
 import os
 import re
 import subprocess
@@ -8,21 +8,6 @@ import sys
 MIN_FFMPEG = "ffmpeg version"
 MIN_PYTHON = (3, 5, 0)
 VIDEO_CODECS = ["hevc", "h264"]
-
-parser = argparse.ArgumentParser(description=("Convert .mkv and .mp4 files "
-                                              "to a lower bitrate to save disk space."))
-parser.add_argument("-d", "--directory", dest="paths",
-                    metavar="PATH", action="store", nargs="*",
-                    help="path to folder containing video files",
-                    required=True)
-parser.add_argument("-c", "--codec", dest="videocodec",
-                    metavar="VIDEOCODEC", action="store",
-                    help="videocodec to encode to (default: hevc)",
-                    type=str, default="hevc")
-parser.add_argument("-b", "--bitrate", dest="bitrate",
-                    metavar="BITRATE", action="store",
-                    help="bitrate to convert video files to in kbit",
-                    type=int, default=8192)
 
 
 def check_python_version():
@@ -87,5 +72,5 @@ def main(args):
 
 
 if __name__ == "__main__":
-    args = parser.parse_args()
+    args = arguments.parser(sys.argv[1:])
     main(args)
