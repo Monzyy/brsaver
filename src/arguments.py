@@ -1,4 +1,6 @@
 import argparse
+from constants import VIDEO_CODECS
+from constants import DEFAULT_BITRATE
 
 
 def parser(args):
@@ -11,9 +13,9 @@ def parser(args):
     parser.add_argument("-c", "--codec", dest="videocodec",
                         metavar="VIDEOCODEC", action="store",
                         help="videocodec to encode to (default: hevc)",
-                        type=str, default="hevc")
+                        type=str, default="hevc", choices=VIDEO_CODECS)
     parser.add_argument("-b", "--bitrate", dest="bitrate",
                         metavar="BITRATE", action="store",
                         help="bitrate to convert video files to in kbit",
-                        type=int, default=8192)
+                        type=int, default=DEFAULT_BITRATE)
     return parser.parse_args(args)

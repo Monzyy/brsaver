@@ -4,10 +4,9 @@ import os
 import re
 import subprocess
 import sys
-
-MIN_FFMPEG = "ffmpeg version"
-MIN_PYTHON = (3, 5, 0)
-VIDEO_CODECS = ["hevc", "h264"]
+from constants import MIN_PYTHON
+from constants import MIN_FFMPEG
+from constants import VIDEO_CODECS
 
 
 def check_python_version():
