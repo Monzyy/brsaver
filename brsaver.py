@@ -23,7 +23,6 @@ parser.add_argument("-b", "--bitrate", dest="bitrate",
                     metavar="BITRATE", action="store",
                     help="bitrate to convert video files to in kbit",
                     type=int, default=8192)
-args = parser.parse_args()
 
 
 def check_python_version():
@@ -35,6 +34,7 @@ def check_ffmpeg_version():
     out = subprocess.run(["ffmpeg", "-version"], stdout=subprocess.PIPE)
     if not MIN_FFMPEG.encode() in out.stdout:
         exit("ffmpeg not found")
+
 
 def check_videocodec():
     videocodec = args.videocodec.lower()
@@ -51,6 +51,7 @@ def collect_video_files(paths):
              for name in files
              if name.endswith((".mkv", ".mp4"))]
     return files
+
 
 def main(args):
     check_python_version()
@@ -82,8 +83,9 @@ def main(args):
         if video.bitrate_kbps > max_bitrate:
             subprocess.run(["ffmpeg", "-y", "-i", video.fullpath, "-c:v", videocodec, "-b:v",
                             str(bitrate_target) + "k",
-                            video.directory+ "/new" + video.name + video.format])
+                            video.directory + "/new" + video.name + video.format])
 
 
 if __name__ == "__main__":
+    args = parser.parse_args()
     main(args)
