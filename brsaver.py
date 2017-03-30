@@ -7,13 +7,18 @@ import sys
 
 MIN_FFMPEG = "ffmpeg version"
 MIN_PYTHON = (3, 5, 0)
+VIDEO_CODECS = ["hevc", "h264"]
 
 parser = argparse.ArgumentParser(description=("Convert .mkv and .mp4 files "
                                               "to a lower bitrate to save disk space."))
 parser.add_argument("-d", "--directory", dest="paths",
                     metavar="PATH", action="store", nargs="*",
                     help="path to folder containing video files",
-                    type=str, required=True)
+                    required=True)
+parser.add_argument("-vc", "--videocodec", dest="videocodec",
+                    metavar="VIDEOCODEC", action="store",
+                    help="videocodec to encode to (default: hevc)",
+                    type=str, default="hevc")
 parser.add_argument("-b", "--bitrate", dest="bitrate",
                     metavar="BITRATE", action="store",
                     help="bitrate to convert video files to in kbit",
@@ -31,6 +36,13 @@ def check_ffmpeg_version():
     if not MIN_FFMPEG.encode() in out.stdout:
         exit("ffmpeg not found")
 
+def check_videocodec():
+    videocodec = args.videocodec.lower()
+    if videocodec in VIDEO_CODECS:
+        return videocodec
+    else:
+        exit(args.videocodec + " is not a supported videocodec")
+
 
 def collect_video_files(path):
     files = [os.path.join(root, name)
@@ -42,6 +54,7 @@ def collect_video_files(path):
 def main(args):
     check_python_version()
     check_ffmpeg_version()
+    videocodec = check_videocodec()
 
     bitrate_target = args.bitrate
     max_bitrate = bitrate_target + 1000
@@ -66,8 +79,8 @@ def main(args):
 
     # Create lower bitrate videos, if the videos bitrate is higher than max_bitrate
     for video in videos:
-        if video.bitrate_kbps > max_bitrate and video.bitrate_kbps != 0:
-            subprocess.run(["ffmpeg", "-y", "-i", video.fullpath, "-b:v",
+        if video.bitrate_kbps > max_bitrate:
+            subprocess.run(["ffmpeg", "-y", "-i", video.fullpath, "-c:v", videocodec, "-b:v",
                             str(bitrate_target) + "k",
                             video.directory+ "/new" + video.name + video.format])
 
