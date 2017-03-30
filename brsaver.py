@@ -44,8 +44,9 @@ def check_videocodec():
         exit(args.videocodec + " is not a supported videocodec")
 
 
-def collect_video_files(path):
+def collect_video_files(paths):
     files = [os.path.join(root, name)
+             for path in paths
              for root, dirs, files in os.walk(path)
              for name in files
              if name.endswith((".mkv", ".mp4"))]
@@ -59,23 +60,22 @@ def main(args):
     bitrate_target = args.bitrate
     max_bitrate = bitrate_target + 1000
 
-    for path in args.paths:
-        # Create video objects from the videofile names
-        video_files = collect_video_files(path)
-        videos = []
-        for video_file in video_files:
-            videos.append(Video(video_file))
+    videos = []
+    video_files = collect_video_files(args.paths)
+    # Create video objects from the videofile names
+    for video_file in video_files:
+        videos.append(Video(video_file))
 
-        # Run ffmpeg -i [videofile] to get bitrates
-        fileIndex = 0
-        for file in video_files:
-            out = subprocess.run(["ffmpeg", "-i", file], stderr=subprocess.PIPE)
-            lines = out.stderr.splitlines()
-            for line in lines:
-                li = line.decode("utf-8")
-                if "bitrate" in li:
-                    videos[fileIndex].bitrate_kbps = int(re.findall(r"[\d+']+", li)[-1])
-            fileIndex += 1
+    # Run ffmpeg -i [videofile] to get bitrates
+    fileIndex = 0
+    for file in video_files:
+        out = subprocess.run(["ffmpeg", "-i", file], stderr=subprocess.PIPE)
+        lines = out.stderr.splitlines()
+        for line in lines:
+            li = line.decode("utf-8")
+            if "bitrate" in li:
+                videos[fileIndex].bitrate_kbps = int(re.findall(r"[\d+']+", li)[-1])
+        fileIndex += 1
 
     # Create lower bitrate videos, if the videos bitrate is higher than max_bitrate
     for video in videos:
