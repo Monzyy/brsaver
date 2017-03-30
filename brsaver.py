@@ -5,7 +5,7 @@ import re
 import subprocess
 import sys
 
-MIN_FFMPEG = "ffmpeg version 2.8"
+MIN_FFMPEG = "ffmpeg version"
 MIN_PYTHON = (3, 5, 0)
 
 parser = argparse.ArgumentParser(description=("Convert .mkv and .mp4 files "
@@ -29,7 +29,7 @@ def check_python_version():
 def check_ffmpeg_version():
     out = subprocess.run(["ffmpeg", "-version"], stdout=subprocess.PIPE)
     if not MIN_FFMPEG.encode() in out.stdout:
-        exit("ffmpeg version 2.8+ not found")
+        exit("ffmpeg not found")
 
 
 def collect_video_files(path):
