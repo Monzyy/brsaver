@@ -6,6 +6,7 @@ To use, first set up a virtual environment:
 
     $ pip install virtualenv
     $ virtualenv brsaver/
+    $ cd brsaver/
     $ source bin/activate
     $ pip install -r requirements.txt
     
