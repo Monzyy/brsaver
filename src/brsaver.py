@@ -1,29 +1,12 @@
 from video import Video
-import argparse
+import arguments
 import os
 import re
 import subprocess
 import sys
-
-MIN_FFMPEG = "ffmpeg version"
-MIN_PYTHON = (3, 5, 0)
-VIDEO_CODECS = ["hevc", "h264"]
-
-parser = argparse.ArgumentParser(description=("Convert .mkv and .mp4 files "
-                                              "to a lower bitrate to save disk space."))
-parser.add_argument("-d", "--directory", dest="paths",
-                    metavar="PATH", action="store", nargs="*",
-                    help="path to folder containing video files",
-                    required=True)
-parser.add_argument("-vc", "--videocodec", dest="videocodec",
-                    metavar="VIDEOCODEC", action="store",
-                    help="videocodec to encode to (default: hevc)",
-                    type=str, default="hevc")
-parser.add_argument("-b", "--bitrate", dest="bitrate",
-                    metavar="BITRATE", action="store",
-                    help="bitrate to convert video files to in kbit",
-                    type=int, default=8192)
-args = parser.parse_args()
+from constants import MIN_PYTHON
+from constants import MIN_FFMPEG
+from constants import VIDEO_CODECS
 
 
 def check_python_version():
@@ -35,6 +18,7 @@ def check_ffmpeg_version():
     out = subprocess.run(["ffmpeg", "-version"], stdout=subprocess.PIPE)
     if not MIN_FFMPEG.encode() in out.stdout:
         exit("ffmpeg not found")
+
 
 def check_videocodec():
     videocodec = args.videocodec.lower()
@@ -51,6 +35,7 @@ def collect_video_files(paths):
              for name in files
              if name.endswith((".mkv", ".mp4"))]
     return files
+
 
 def main(args):
     check_python_version()
@@ -82,8 +67,9 @@ def main(args):
         if video.bitrate_kbps > max_bitrate:
             subprocess.run(["ffmpeg", "-y", "-i", video.fullpath, "-c:v", videocodec, "-b:v",
                             str(bitrate_target) + "k",
-                            video.directory+ "/new" + video.name + video.format])
+                            video.directory + "/new" + video.name + video.format])
 
 
 if __name__ == "__main__":
+    args = arguments.parser(sys.argv[1:])
     main(args)
