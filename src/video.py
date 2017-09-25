@@ -1,4 +1,6 @@
 import os
+
+
 class Video:
     name = ""
     directory = ""
@@ -6,6 +8,7 @@ class Video:
     bytes = 0
     seconds = 0
     bitrate_kbps = 0
+    streams = []
 
     def __init__(self, fullpath):
         self.fullpath = fullpath
@@ -13,6 +16,7 @@ class Video:
         tmp = fullpath.split('/')[-1]
         self.name = os.path.splitext(tmp)[0]
         self.format = os.path.splitext(tmp)[1]
+        self.streams = []
 
     def __repr__(self):
         return "{}:{}".format(self.name, self.bitrate_kbps)
