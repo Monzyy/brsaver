@@ -80,6 +80,10 @@ def main(args):
             command.extend(streams)
             command.extend([video.directory + "/new" + video.name + video.format])
             subprocess.run(command)
+            # overwrite original
+            if args.overwrite:
+                os.remove(video.fullpath)
+                os.rename(video.get_tempfile_path(), video.fullpath)
 
 
 if __name__ == "__main__":

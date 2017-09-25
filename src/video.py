@@ -20,3 +20,6 @@ class Video:
 
     def __repr__(self):
         return "{}:{}".format(self.name, self.bitrate_kbps)
+
+    def get_tempfile_path(self):
+        return self.directory + "/new" + self.name + self.format

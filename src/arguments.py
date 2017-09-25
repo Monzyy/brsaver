@@ -18,4 +18,7 @@ def parser(args):
                         metavar="BITRATE", action="store",
                         help="bitrate to convert video files to in kbit",
                         type=int, default=DEFAULT_BITRATE)
+    parser.add_argument("-o" "--overwrite", dest="overwrite",
+                        help="used to overwrite original file",
+                        action="store_true")
     return parser.parse_args(args)
