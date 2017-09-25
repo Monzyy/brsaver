@@ -67,7 +67,12 @@ def main(args):
         if video.bitrate_kbps > max_bitrate:
             subprocess.run(["ffmpeg", "-y", "-i", video.fullpath, "-c:v", videocodec, "-b:v",
                             str(bitrate_target) + "k",
-                            video.directory + "/new" + video.name + video.format])
+                            video.get_tempfile_path()])
+            # overwrite original
+            if args.overwrite:
+                os.remove(video.fullpath)
+                os.rename(video.get_tempfile_path(), video.fullpath)
+
 
 
 if __name__ == "__main__":
